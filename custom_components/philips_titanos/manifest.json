@@ -1,0 +1,13 @@
+{
+  "domain": "philips_titanos",
+  "name": "Philips Titan OS TV",
+  "codeowners": ["@ksooo"],
+  "config_flow": true,
+  "documentation": "https://github.com/ksooo/ha-philips-titanos",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/ksooo/ha-philips-titanos/issues",
+  "requirements": [],
+  "version": "0.1.0",
+  "zeroconf": ["_philipstv_s_rpc._tcp.local."]
+}

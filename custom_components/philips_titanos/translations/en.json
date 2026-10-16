@@ -1,0 +1,55 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured",
+      "cannot_connect": "Failed to connect",
+      "not_supported": "This device is not a Philips TV with Titan OS.",
+      "reauth_successful": "Re-authentication was successful",
+      "reconfigure_successful": "Reconfiguration was successful",
+      "unique_id_mismatch": "This is a different TV than the one configured."
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_pin": "The PIN was wrong or has expired. A new PIN is now shown on the TV.",
+      "tv_off": "The TV is in standby. Switch it on and submit again."
+    },
+    "flow_title": "{name}",
+    "step": {
+      "pair": {
+        "data": {
+          "pin": "PIN"
+        },
+        "data_description": {
+          "pin": "The PIN shown on the TV. It is valid for 30 seconds."
+        },
+        "description": "Enter the PIN shown on {name}."
+      },
+      "reauth_confirm": {
+        "description": "{name} no longer accepts the stored credentials. Switch the TV on and submit to pair again.",
+        "title": "Pair again"
+      },
+      "reconfigure": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "The hostname or IP address of the TV."
+        },
+        "description": "Update the address of the TV."
+      },
+      "user": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "The hostname or IP address of the TV."
+        },
+        "description": "Switch the TV on. After submitting, it shows a PIN for pairing."
+      },
+      "zeroconf_confirm": {
+        "description": "Do you want to add {name}? Switch the TV on. After submitting, it shows a PIN for pairing.",
+        "title": "Philips TV found"
+      }
+    }
+  }
+}

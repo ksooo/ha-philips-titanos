@@ -1,0 +1,55 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Gerät ist bereits konfiguriert",
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "not_supported": "Dieses Gerät ist kein Philips-Fernseher mit Titan OS.",
+      "reauth_successful": "Die erneute Authentifizierung war erfolgreich",
+      "reconfigure_successful": "Die Neukonfiguration war erfolgreich",
+      "unique_id_mismatch": "Das ist ein anderer Fernseher als der konfigurierte."
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_pin": "Die PIN war falsch oder ist abgelaufen. Der Fernseher zeigt jetzt eine neue PIN an.",
+      "tv_off": "Der Fernseher ist im Standby. Bitte einschalten und erneut absenden."
+    },
+    "flow_title": "{name}",
+    "step": {
+      "pair": {
+        "data": {
+          "pin": "PIN"
+        },
+        "data_description": {
+          "pin": "Die auf dem Fernseher angezeigte PIN. Sie ist 30 Sekunden lang gültig."
+        },
+        "description": "Bitte die auf {name} angezeigte PIN eingeben."
+      },
+      "reauth_confirm": {
+        "description": "{name} akzeptiert die gespeicherten Zugangsdaten nicht mehr. Bitte den Fernseher einschalten und absenden, um ihn erneut zu koppeln.",
+        "title": "Erneut koppeln"
+      },
+      "reconfigure": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "Hostname oder IP-Adresse des Fernsehers."
+        },
+        "description": "Adresse des Fernsehers aktualisieren."
+      },
+      "user": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "Hostname oder IP-Adresse des Fernsehers."
+        },
+        "description": "Bitte den Fernseher einschalten. Nach dem Absenden zeigt er eine PIN zum Koppeln an."
+      },
+      "zeroconf_confirm": {
+        "description": "Soll {name} hinzugefügt werden? Bitte den Fernseher einschalten. Nach dem Absenden zeigt er eine PIN zum Koppeln an.",
+        "title": "Philips-Fernseher gefunden"
+      }
+    }
+  }
+}
