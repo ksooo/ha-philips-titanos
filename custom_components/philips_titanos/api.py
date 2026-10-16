@@ -1,8 +1,9 @@
 """Async client for the JointSpace v6 API of Philips Titan OS TVs.
 
-Most GET endpoints of this firmware return what was last set through the API,
-not the actual device state, and the API stays reachable in standby. The TV's
-Cast receiver runs only while the TV is on, so its port is the power indicator.
+Several GET endpoints of this firmware return what was last set through the
+API rather than the device state, and the API stays reachable in standby. The
+TV's Cast receiver runs only while the TV is on, so its port is the power
+indicator.
 """
 
 import asyncio
@@ -107,13 +108,13 @@ def decrypt(value: str | None) -> str | None:
     return (unpadder.update(padded) + unpadder.finalize()).decode()
 
 
-def find_menu_node(node: dict[str, Any], context: str) -> int | None:
-    """Return the id of the settings menu node with this context."""
+def find_menu_node(node: dict[str, Any], context: str) -> dict[str, Any] | None:
+    """Return the settings menu node with this context."""
     if node.get("context") == context:
-        return node.get("node_id")
+        return node
     for child in (node.get("data") or {}).get("nodes") or []:
-        if (node_id := find_menu_node(child, context)) is not None:
-            return node_id
+        if (found := find_menu_node(child, context)) is not None:
+            return found
     return None
 
 
@@ -281,6 +282,14 @@ class TitanOSClient:
         data = await self._request("GET", "/ambilight/supportedstyles")
         return (data or {}).get("supportedStyles", [])
 
+    async def get_ambilight_configuration(self) -> dict[str, Any] | None:
+        """Return the active style, or None while Ambilight is off."""
+        return await self._request("GET", "/ambilight/currentconfiguration") or None
+
+    async def get_ambilight_processed(self) -> dict[str, Any]:
+        """Return the colors the LEDs show, by layer, side and pixel."""
+        return await self._request("GET", "/ambilight/processed") or {}
+
     async def set_ambilight_style(self, style: str, setting: str | None) -> None:
         """Switch Ambilight on with a style and optional algorithm."""
         body: dict[str, Any] = {"styleName": style, "isExpert": False}
@@ -316,27 +325,35 @@ class TitanOSClient:
         data = await self._request("GET", "/menuitems/settings/structure")
         return (data or {}).get("node", {})
 
-    async def activate_menu_node(self, node_id: int) -> None:
-        """Trigger a settings menu node.
+    async def get_menu_values(self, node_ids: list[int]) -> dict[int, dict[str, Any]]:
+        """Return the current data of settings menu nodes, such as the item
+        selected in a list node."""
+        data = await self._request(
+            "POST",
+            "/menuitems/settings/current",
+            {"nodes": [{"nodeid": node_id} for node_id in node_ids]},
+        )
+        return {
+            value["value"]["Nodeid"]: value["value"].get("data", {})
+            for value in (data or {}).get("values", [])
+        }
+
+    async def activate_menu_node(self, node_id: int, item: int | None = None) -> None:
+        """Trigger a settings menu node, or select one of its list items.
 
         Ambilight off works only this way; style OFF and ambilight/power are
-        acknowledged but ignored. It also updates the menu, which the TV
-        restores after standby.
+        acknowledged but ignored. Unlike ambilight/currentconfiguration, this
+        also updates the menu, which the TV restores after standby.
         """
+        value: dict[str, Any] = {
+            "Nodeid": node_id,
+            "nodeid": node_id,
+            "node_id": node_id,
+        }
+        if item is not None:
+            value["data"] = {"selected_item": item}
         await self._request(
-            "POST",
-            "/menuitems/settings/update",
-            {
-                "values": [
-                    {
-                        "value": {
-                            "Nodeid": node_id,
-                            "nodeid": node_id,
-                            "node_id": node_id,
-                        }
-                    }
-                ]
-            },
+            "POST", "/menuitems/settings/update", {"values": [{"value": value}]}
         )
 
     async def get_channel_db(self) -> dict[str, Any]:

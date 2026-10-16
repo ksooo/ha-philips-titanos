@@ -52,6 +52,32 @@
       }
     }
   },
+  "entity": {
+    "light": {
+      "ambilight": {
+        "name": "Ambilight",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "video_standard": "Video: Standard",
+              "video_sports": "Video: Sport",
+              "video_natural": "Video: Kino",
+              "video_game": "Video: Spiele",
+              "audio_energy_adaptive_brightness": "Audio: Musik",
+              "audio_energy_adaptive_colors": "Audio: Farben",
+              "audio_vu_meter": "Audio: VU-Meter",
+              "audio_spectrum_analyzer": "Audio: Spektrum",
+              "audio_knight_rider_clockwise": "Audio: Lauflicht im Uhrzeigersinn",
+              "audio_knight_rider_alternating": "Audio: Lauflicht hin und her",
+              "audio_random_pixel_flash": "Audio: Zufallsblitze",
+              "audio_strobe": "Audio: Stroboskop",
+              "audio_party": "Audio: Party"
+            }
+          }
+        }
+      }
+    }
+  },
   "exceptions": {
     "command_failed": {
       "message": "Der Fernseher hat den Befehl nicht angenommen: {error}"
@@ -65,6 +91,9 @@
     "invalid_source": {
       "message": "{source} ist nicht auswählbar, nur Home und Live TV."
     },
+    "no_ambilight_off": {
+      "message": "Das Einstellungsmenü des Fernsehers hat keinen Eintrag, um Ambilight auszuschalten."
+    },
     "no_channels": {
       "message": "Der Fernseher hat keine Sender."
     },
@@ -73,6 +102,9 @@
     },
     "unknown_channel": {
       "message": "Der Fernseher hat keinen Sender {channel}."
+    },
+    "unknown_effect": {
+      "message": "Der Fernseher hat keinen Ambilight-Stil {effect}."
     }
   }
 }

@@ -9,8 +9,6 @@ differently: most of what it reports is not what the TV is doing, see
 Tested on a 43PUS8400/12. Other Titan OS models and the Linux-based Philips
 TVs from 2023 report the same API and are accepted, but are untested.
 
-**Status:** media player and remote done; Ambilight is not there yet.
-
 ## Requirements
 
 * Home Assistant 2026.10 or newer
@@ -67,6 +65,9 @@ TV runs, otherwise as on or off. The state is polled every 10 seconds.
 On and off take effect on the TV at once, but the TV confirms them only up to
 30 seconds later. Until then the media player shows the requested state.
 
+Now and then the TV wakes up by itself and stays on with the screen dark. It
+then looks the same as a TV that is on, so the media player reads as on.
+
 *Live TV* tunes to the channel last chosen through Home Assistant, or to the
 first one. In an automation a channel is played like this:
 
@@ -111,6 +112,32 @@ Keys known to the API include `Standby`, `Home`, `Back`, `Source`,
 `Standby`, `Home`, `Back`, `Source`, `VolumeUp`, `VolumeDown`, `Mute`,
 `ChannelStepUp` and `ChannelStepDown` are tested.
 Holding a key is not supported.
+
+## Ambilight
+
+Ambilight is a light with color, brightness and the TV's styles as effects:
+`video_*` follow the picture, `audio_*` the sound. Choosing a color or a
+brightness switches to a fixed color. While a style runs, the light reports
+neither color nor brightness. It is unavailable while the TV is off.
+
+The light shows what the TV reports, including changes made with its remote.
+Colors are read from the LEDs, as the TV reports none; they may differ
+slightly from the color picked.
+
+The video styles are the ones in the TV's menu: Standard, Sports, Cinema and
+Game. The TV reports its "AI" style as Cinema. The audio styles are those the
+TV lists; its menu offers only one of them, as "Music".
+
+Switching off and the styles the TV's settings menu knows - the four video
+styles, Music and the audio styles Party and Rhythm (`random_pixel_flash`) -
+go through that menu, so the TV keeps them across standby. The other audio
+styles and colors cannot be set in the menu; after standby the TV returns to
+whatever its menu says.
+
+Woken through Wake-on-LAN, which is how Home Assistant switches it on, the TV
+leaves Ambilight off whatever its menu says. When Home Assistant switched the
+TV on and Ambilight is off while the menu is set to a style, the integration
+applies that style.
 
 ## Development
 

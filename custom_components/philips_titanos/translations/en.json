@@ -52,6 +52,32 @@
       }
     }
   },
+  "entity": {
+    "light": {
+      "ambilight": {
+        "name": "Ambilight",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "video_standard": "Video: Standard",
+              "video_sports": "Video: Sports",
+              "video_natural": "Video: Cinema",
+              "video_game": "Video: Game",
+              "audio_energy_adaptive_brightness": "Audio: Music",
+              "audio_energy_adaptive_colors": "Audio: Colors",
+              "audio_vu_meter": "Audio: VU meter",
+              "audio_spectrum_analyzer": "Audio: Spectrum",
+              "audio_knight_rider_clockwise": "Audio: Scanner clockwise",
+              "audio_knight_rider_alternating": "Audio: Scanner alternating",
+              "audio_random_pixel_flash": "Audio: Random flash",
+              "audio_strobe": "Audio: Strobe",
+              "audio_party": "Audio: Party"
+            }
+          }
+        }
+      }
+    }
+  },
   "exceptions": {
     "command_failed": {
       "message": "The TV did not accept the command: {error}"
@@ -65,6 +91,9 @@
     "invalid_source": {
       "message": "{source} cannot be selected; only Home and Live TV can."
     },
+    "no_ambilight_off": {
+      "message": "The TV's settings menu has no entry to switch Ambilight off."
+    },
     "no_channels": {
       "message": "The TV has no channels."
     },
@@ -73,6 +102,9 @@
     },
     "unknown_channel": {
       "message": "The TV has no channel {channel}."
+    },
+    "unknown_effect": {
+      "message": "The TV has no Ambilight style {effect}."
     }
   }
 }

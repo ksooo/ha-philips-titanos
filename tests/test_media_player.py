@@ -129,11 +129,17 @@ async def test_turn_on(
     mock_wake_on_lan.assert_awaited_once_with(MAC)
     assert hass.states.get(ENTITY_ID).state == STATE_ON
 
-    await _tick(hass, freezer, 10)
+    calls = mock_client.is_on.await_count
+    await _tick(hass, freezer, 2)
+    assert mock_client.is_on.await_count == calls + 1
     assert hass.states.get(ENTITY_ID).state == STATE_ON
 
-    await _tick(hass, freezer, 40)
+    await _tick(hass, freezer, 45)
     assert hass.states.get(ENTITY_ID).state == STATE_OFF
+
+    calls = mock_client.is_on.await_count
+    await _tick(hass, freezer, 2)
+    assert mock_client.is_on.await_count == calls
 
 
 @pytest.mark.usefixtures("init_integration")

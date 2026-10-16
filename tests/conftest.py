@@ -72,6 +72,48 @@ CHANNELS = [
     {"ccid": 40005004, "preset": 5004, "name": "CNN International"},
     {"ccid": 40005006, "preset": 5006, "name": "Euronews Deutsch"},
 ]
+AMBILIGHT_STYLES = [
+    {"styleName": "OFF"},
+    {"styleName": "FOLLOW_VIDEO"},
+    {"styleName": "FOLLOW_AUDIO", "algorithms": ["VU_METER", "PARTY"]},
+    {"styleName": "FOLLOW_COLOR", "algorithms": ["MANUAL_HUE", "AUTOMATIC_HUE"]},
+]
+FOLLOW_VIDEO_NODE = {
+    "node_id": 320,
+    "context": "ambilight_follow_video",
+    "data": {
+        "enums": [
+            {"enum_id": 321, "string_id": "MLM_PHM_KEY_MISC_AI"},
+            {"enum_id": 325, "string_id": "MLM_PHM_KEY_MAIN_AMBILIGHT_GAME_2K23"},
+        ]
+    },
+}
+MENU = {
+    "node_id": 1,
+    "context": "Setup_Menu",
+    "data": {
+        "nodes": [
+            {
+                "node_id": 3,
+                "context": "ambilight",
+                "data": {
+                    "nodes": [
+                        {
+                            "node_id": 300,
+                            "context": "ambilight_style",
+                            "data": {
+                                "nodes": [
+                                    {"node_id": 310, "context": "ambilight_off"},
+                                    FOLLOW_VIDEO_NODE,
+                                ]
+                            },
+                        }
+                    ]
+                },
+            }
+        ]
+    },
+}
 
 
 @pytest.fixture
@@ -92,6 +134,11 @@ def mock_client() -> Generator[AsyncMock]:
     client.is_muted.return_value = False
     client.get_channel_db.return_value = CHANNEL_DB
     client.get_channels.return_value = CHANNELS
+    client.get_ambilight_styles.return_value = AMBILIGHT_STYLES
+    client.get_menu_structure.return_value = MENU
+    client.get_ambilight_configuration.return_value = None
+    client.get_ambilight_processed.return_value = {}
+    client.get_menu_values.return_value = {}
     with (
         patch(
             "custom_components.philips_titanos.config_flow.TitanOSClient",
