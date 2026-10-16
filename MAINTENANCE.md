@@ -40,7 +40,7 @@ is doing:
 
 | Endpoint | Behavior |
 | --- | --- |
-| `audio/volume` | does not follow the remote or key presses |
+| `audio/volume` | `current` does not follow the remote or key presses; `muted` does |
 | `ambilight/power`, `ambilight/currentconfiguration` | report the last API write, even when it had no effect |
 | `ambilight/mode` | unrelated to power or Ambilight; flips between `internal` and `unknown` |
 | `screenstate` | `Off` while the picture is on |
@@ -73,7 +73,13 @@ What does reflect reality:
 | Ambilight off | menu node with context `ambilight_off` via `menuitems/settings/update` | style `OFF`, `ambilight/power` |
 | Channel | `POST activities/tv` with `ccid` and list ID, also from the home screen | |
 | Channel up / down | keys `ChannelStepUp`, `ChannelStepDown` | |
-| Input, app | | `sources` 403, `applications` 403, `activities/launch` 405 |
+| Input | waking a device with HDMI-CEC on that input | `sources`, `sources/current` 403, `POST activities/current` 405 |
+| App | | `applications` 403, `activities/launch` 405 |
+
+`sources`, `applications`, `quickmenu` and `matter` answer 403 even to a
+device that listed them in `featuring` when pairing. The menu of the `Source`
+key lists the inputs in no numeric order and opens on the current one, so
+keys cannot reliably reach a given input.
 
 Ambilight set through `currentconfiguration` bypasses the TV's settings menu.
 The menu keeps showing the old value, and after standby the TV restores the

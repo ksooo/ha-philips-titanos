@@ -51,5 +51,22 @@
         "title": "Philips TV found"
       }
     }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "The TV did not accept the command: {error}"
+    },
+    "invalid_media_type": {
+      "message": "Only channels can be played, not {media_type}."
+    },
+    "invalid_source": {
+      "message": "{source} cannot be selected; only Home and Live TV can."
+    },
+    "no_channels": {
+      "message": "The TV has no channels."
+    },
+    "unknown_channel": {
+      "message": "The TV has no channel {channel}."
+    }
   }
 }

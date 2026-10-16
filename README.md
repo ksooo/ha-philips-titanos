@@ -9,7 +9,7 @@ differently: most of what it reports is not what the TV is doing, see
 Tested on a 43PUS8400/12. Other Titan OS models and the Linux-based Philips
 TVs from 2023 report the same API and are accepted, but are untested.
 
-**Status:** setup and pairing work; entities are not there yet.
+**Status:** media player done; remote and Ambilight are not there yet.
 
 ## Requirements
 
@@ -46,7 +46,45 @@ During pairing the integration also reads the MAC address of the network
 interface that has Wake-on-LAN enabled; it is needed to switch the TV on.
 
 When the TV gets a new IP address, discovery updates it. *Reconfigure* on the
-integration entry changes it by hand.
+integration entry changes it by hand. If the TV forgets the pairing, for
+instance after a factory reset, Home Assistant asks to pair again.
+
+## Media player
+
+The TV appears as a media player of type TV. It reads as playing while live
+TV runs, otherwise as on or off. The state is polled every 10 seconds.
+
+| Feature | How |
+| --- | --- |
+| On | Wake-on-LAN; offered only if pairing found a MAC address |
+| Off | the remote's Standby key, not sent while the TV is off |
+| Volume up / down | the remote's volume keys |
+| Mute | the remote's mute key; the state is read from the TV |
+| Source | *Home* and *Live TV* can be chosen; *HDMI* is shown but cannot be selected |
+| Channels | listed in the media browser, also playable by name or ID |
+| Stop, next / previous | in live TV only: back to the home screen, channel up / down |
+
+On and off take effect on the TV at once, but the TV confirms them only up to
+30 seconds later. Until then the media player shows the requested state.
+
+*Live TV* tunes to the channel last chosen through Home Assistant, or to the
+first one. In an automation a channel is played like this:
+
+```yaml
+action: media_player.play_media
+target:
+  entity_id: media_player.43pus8400_12
+data:
+  media_content_type: channel
+  media_content_id: Euronews Deutsch
+```
+
+The TV does not report the volume or the current channel, so the media
+player shows neither; it does not even know the channel it tuned to once the
+remote was used. Inputs and apps cannot be switched through the API. A
+device on an HDMI input with HDMI-CEC switches the TV to that input when it
+wakes up, so waking it, for instance through its own integration, selects
+the input.
 
 ## Development
 

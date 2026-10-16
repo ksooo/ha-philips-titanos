@@ -264,6 +264,14 @@ class TitanOSClient:
         data = await self._request("GET", "/activities/current")
         return (data or {}).get("id")
 
+    async def is_muted(self) -> bool | None:
+        """Return whether the TV is muted.
+
+        The volume the same endpoint reports does not follow the remote.
+        """
+        data = await self._request("GET", "/audio/volume")
+        return (data or {}).get("muted")
+
     async def send_key(self, key: str) -> None:
         """Send a remote control key."""
         await self._request("POST", "/input/key", {"key": key})

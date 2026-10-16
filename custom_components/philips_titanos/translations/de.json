@@ -51,5 +51,22 @@
         "title": "Philips-Fernseher gefunden"
       }
     }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Der Fernseher hat den Befehl nicht angenommen: {error}"
+    },
+    "invalid_media_type": {
+      "message": "Abspielbar sind nur Sender, nicht {media_type}."
+    },
+    "invalid_source": {
+      "message": "{source} ist nicht auswählbar, nur Home und Live TV."
+    },
+    "no_channels": {
+      "message": "Der Fernseher hat keine Sender."
+    },
+    "unknown_channel": {
+      "message": "Der Fernseher hat keinen Sender {channel}."
+    }
   }
 }
