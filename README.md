@@ -150,6 +150,9 @@ uv run ruff format
 uv run ruff check
 ```
 
+On GitHub, every push is checked with the HACS validation and Home
+Assistant's hassfest, and once a week again against their latest rules.
+
 ## License
 
 Apache 2.0, see [LICENSE](LICENSE).
