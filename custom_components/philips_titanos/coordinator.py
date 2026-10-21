@@ -1,5 +1,6 @@
 """Coordinator for the Philips Titan OS TV integration."""
 
+from collections.abc import Awaitable
 from dataclasses import dataclass
 from datetime import timedelta
 import logging
@@ -7,11 +8,16 @@ import time
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_MAC
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.exceptions import (
+    ConfigEntryAuthFailed,
+    HomeAssistantError,
+    ServiceValidationError,
+)
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import InvalidAuth, SystemInfo, TitanOSClient, TitanOSError
+from .api import InvalidAuth, SystemInfo, TitanOSClient, TitanOSError, wake_on_lan
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -69,6 +75,34 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
         self.channels: list[Channel] = []
         self.last_channel: Channel | None = None
         self._expected_power: tuple[bool, float] | None = None
+
+    async def async_command(self, command: Awaitable[Any]) -> None:
+        """Run a command and report its failure to the user."""
+        try:
+            await command
+        except (TitanOSError, OSError) as err:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="command_failed",
+                translation_placeholders={"error": str(err)},
+            ) from err
+
+    async def async_turn_on(self) -> None:
+        """Wake the TV."""
+        if not (mac := self.config_entry.data.get(CONF_MAC)):
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="no_mac"
+            )
+        await self.async_command(wake_on_lan(mac))
+        self.expect_power(True)
+
+    async def async_turn_off(self) -> None:
+        """Put the TV into standby."""
+        # Standby is the remote's power key and may wake a TV in standby.
+        if not self.data.is_on:
+            return
+        await self.async_command(self.client.send_key("Standby"))
+        self.expect_power(False)
 
     def expect_power(self, is_on: bool) -> None:
         """Report this power state until the TV confirms it or a grace ends."""

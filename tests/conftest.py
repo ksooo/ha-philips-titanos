@@ -106,7 +106,7 @@ def mock_client() -> Generator[AsyncMock]:
 def mock_wake_on_lan() -> Generator[AsyncMock]:
     """Mock sending the magic packet."""
     with patch(
-        "custom_components.philips_titanos.media_player.wake_on_lan"
+        "custom_components.philips_titanos.coordinator.wake_on_lan"
     ) as wake_on_lan:
         yield wake_on_lan
 

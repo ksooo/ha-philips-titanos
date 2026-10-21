@@ -9,7 +9,7 @@ from .api import SystemInfo, TitanOSClient, TitanOSError
 from .const import CONF_AUTH_KEY, CONF_DEVICE_ID
 from .coordinator import TitanOSConfigEntry, TitanOSCoordinator
 
-PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER]
+PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.REMOTE]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: TitanOSConfigEntry) -> bool:

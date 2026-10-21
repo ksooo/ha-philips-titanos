@@ -1,6 +1,5 @@
 """Media player for the Philips Titan OS TV integration."""
 
-from collections.abc import Awaitable
 from dataclasses import replace
 from typing import Any, override
 
@@ -18,7 +17,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .api import TitanOSError, wake_on_lan
 from .const import DOMAIN
 from .coordinator import Channel, TitanOSConfigEntry, TitanOSCoordinator
 from .entity import TitanOSEntity
@@ -61,7 +59,6 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
         """Initialize the media player."""
         super().__init__(coordinator, None)
         self._attr_source_list = [SOURCE_HOME, SOURCE_LIVE_TV]
-        self._mac: str | None = coordinator.config_entry.data.get(CONF_MAC)
         self._attr_supported_features = (
             MediaPlayerEntityFeature.TURN_OFF
             | MediaPlayerEntityFeature.VOLUME_STEP
@@ -70,7 +67,7 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
             | MediaPlayerEntityFeature.BROWSE_MEDIA
             | MediaPlayerEntityFeature.PLAY_MEDIA
         )
-        if self._mac:
+        if coordinator.config_entry.data.get(CONF_MAC):
             self._attr_supported_features |= MediaPlayerEntityFeature.TURN_ON
 
     @property
@@ -103,48 +100,36 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
         """Return what the TV shows."""
         return _ACTIVITY_SOURCES.get(self.coordinator.data.activity or "")
 
-    async def _call(self, command: Awaitable[Any]) -> None:
-        try:
-            await command
-        except (TitanOSError, OSError) as err:
-            raise HomeAssistantError(
-                translation_domain=DOMAIN,
-                translation_key="command_failed",
-                translation_placeholders={"error": str(err)},
-            ) from err
-
     @override
     async def async_turn_on(self) -> None:
         """Wake the TV."""
-        assert self._mac
-        await self._call(wake_on_lan(self._mac))
-        self.coordinator.expect_power(True)
+        await self.coordinator.async_turn_on()
 
     @override
     async def async_turn_off(self) -> None:
         """Put the TV into standby."""
-        # Standby is the remote's power key and may wake a TV in standby.
-        if not self.coordinator.data.is_on:
-            return
-        await self._call(self.coordinator.client.send_key("Standby"))
-        self.coordinator.expect_power(False)
+        await self.coordinator.async_turn_off()
 
     @override
     async def async_volume_up(self) -> None:
         """Raise the volume by one step."""
-        await self._call(self.coordinator.client.send_key("VolumeUp"))
+        await self.coordinator.async_command(
+            self.coordinator.client.send_key("VolumeUp")
+        )
 
     @override
     async def async_volume_down(self) -> None:
         """Lower the volume by one step."""
-        await self._call(self.coordinator.client.send_key("VolumeDown"))
+        await self.coordinator.async_command(
+            self.coordinator.client.send_key("VolumeDown")
+        )
 
     @override
     async def async_mute_volume(self, mute: bool) -> None:
         """Mute or unmute with the remote's mute key, which toggles."""
         if self.coordinator.data.muted == mute:
             return
-        await self._call(self.coordinator.client.send_key("Mute"))
+        await self.coordinator.async_command(self.coordinator.client.send_key("Mute"))
         self.coordinator.async_set_updated_data(
             replace(self.coordinator.data, muted=mute)
         )
@@ -152,24 +137,30 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
     @override
     async def async_media_stop(self) -> None:
         """Leave live TV for the home screen."""
-        await self._call(self.coordinator.client.send_key("Home"))
+        await self.coordinator.async_command(self.coordinator.client.send_key("Home"))
         await self.coordinator.async_request_refresh()
 
     @override
     async def async_media_next_track(self) -> None:
         """Tune to the next channel."""
-        await self._call(self.coordinator.client.send_key("ChannelStepUp"))
+        await self.coordinator.async_command(
+            self.coordinator.client.send_key("ChannelStepUp")
+        )
 
     @override
     async def async_media_previous_track(self) -> None:
         """Tune to the previous channel."""
-        await self._call(self.coordinator.client.send_key("ChannelStepDown"))
+        await self.coordinator.async_command(
+            self.coordinator.client.send_key("ChannelStepDown")
+        )
 
     @override
     async def async_select_source(self, source: str) -> None:
         """Switch to the home screen or live TV."""
         if source == SOURCE_HOME:
-            await self._call(self.coordinator.client.send_key("Home"))
+            await self.coordinator.async_command(
+                self.coordinator.client.send_key("Home")
+            )
         elif source == SOURCE_LIVE_TV:
             channel = self.coordinator.last_channel or next(
                 iter(self.coordinator.channels), None
@@ -188,7 +179,7 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
         await self.coordinator.async_request_refresh()
 
     async def _tune(self, channel: Channel) -> None:
-        await self._call(
+        await self.coordinator.async_command(
             self.coordinator.client.set_channel(channel.ccid, channel.list_id)
         )
         self.coordinator.last_channel = channel

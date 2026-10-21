@@ -9,7 +9,7 @@ differently: most of what it reports is not what the TV is doing, see
 Tested on a 43PUS8400/12. Other Titan OS models and the Linux-based Philips
 TVs from 2023 report the same API and are accepted, but are untested.
 
-**Status:** media player done; remote and Ambilight are not there yet.
+**Status:** media player and remote done; Ambilight is not there yet.
 
 ## Requirements
 
@@ -85,6 +85,32 @@ remote was used. Inputs and apps cannot be switched through the API. A
 device on an HDMI input with HDMI-CEC switches the TV to that input when it
 wakes up, so waking it, for instance through its own integration, selects
 the input.
+
+## Remote
+
+The remote entity switches the TV on and off like the media player and sends
+keys of the TV's remote with `remote.send_command`, by their JointSpace
+names:
+
+```yaml
+action: remote.send_command
+target:
+  entity_id: remote.43pus8400_12
+data:
+  command: [Home, CursorDown, Confirm]
+  delay_secs: 0.5
+```
+
+Keys known to the API include `Standby`, `Home`, `Back`, `Source`,
+`Options`, `Info`, `Find`, `CursorUp`, `CursorDown`, `CursorLeft`,
+`CursorRight`, `Confirm`, `VolumeUp`, `VolumeDown`, `Mute`,
+`ChannelStepUp`, `ChannelStepDown`, `Digit0` to `Digit9`, `Dot`,
+`PlayPause`, `Pause`, `Stop`, `Rewind`, `FastForward`, `Record`, `Next`,
+`Previous`, `RedColour`, `GreenColour`, `YellowColour`, `BlueColour`,
+`WatchTV`, `Teletext`, `Subtitle`, `Viewmode`, `Adjust` and `Online`. Only
+`Standby`, `Home`, `Back`, `Source`, `VolumeUp`, `VolumeDown`, `Mute`,
+`ChannelStepUp` and `ChannelStepDown` are tested.
+Holding a key is not supported.
 
 ## Development
 

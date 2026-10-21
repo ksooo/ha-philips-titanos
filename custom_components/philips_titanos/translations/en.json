@@ -56,6 +56,9 @@
     "command_failed": {
       "message": "The TV did not accept the command: {error}"
     },
+    "hold_not_supported": {
+      "message": "The TV cannot hold keys."
+    },
     "invalid_media_type": {
       "message": "Only channels can be played, not {media_type}."
     },
@@ -64,6 +67,9 @@
     },
     "no_channels": {
       "message": "The TV has no channels."
+    },
+    "no_mac": {
+      "message": "The TV cannot be switched on: pairing found no network interface with Wake-on-LAN."
     },
     "unknown_channel": {
       "message": "The TV has no channel {channel}."

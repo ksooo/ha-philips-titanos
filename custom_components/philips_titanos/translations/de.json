@@ -56,6 +56,9 @@
     "command_failed": {
       "message": "Der Fernseher hat den Befehl nicht angenommen: {error}"
     },
+    "hold_not_supported": {
+      "message": "Der Fernseher kann Tasten nicht gedrückt halten."
+    },
     "invalid_media_type": {
       "message": "Abspielbar sind nur Sender, nicht {media_type}."
     },
@@ -64,6 +67,9 @@
     },
     "no_channels": {
       "message": "Der Fernseher hat keine Sender."
+    },
+    "no_mac": {
+      "message": "Der Fernseher kann nicht eingeschaltet werden: Beim Koppeln wurde keine Netzwerkschnittstelle mit Wake-on-LAN gefunden."
     },
     "unknown_channel": {
       "message": "Der Fernseher hat keinen Sender {channel}."
